@@ -117,11 +117,12 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
   )
 
   return (
-    <>
+          <>
       <Head>
         <title>{`How to rate ${decodeHtmlEntities(plugin.name || 'this plugin')} on WordPress.org`}</title>
         <meta name="description" content={`Learn how to leave a 5-star review for ${decodeHtmlEntities(plugin.name || 'this plugin')} on WordPress.org`} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+
       </Head>
 
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-16 px-4">
@@ -151,21 +152,20 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
           {/* Main content area */}
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             {/* Left side - Instructions */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-10 hover:shadow-3xl transition-shadow duration-300">
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-2xl border border-white/20 p-10 hover:shadow-3xl transition-shadow duration-300">
               <div className="mb-10">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl mb-6">
                   <span className="text-3xl font-bold text-white">1</span>
                 </div>
-                <h2 className="text-4xl font-black text-gray-900 mb-3">Step 1</h2>
-                <h3 className="text-2xl font-bold text-gray-700 mb-8">
+                <h3 className="text-xl font-bold text-gray-700 mb-8">
                   Log in to WordPress.org
                 </h3>
               </div>
               
               <div className="space-y-8">
                 <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-6 border border-blue-200 shadow-lg">
-                  <p className="text-gray-800 text-xl leading-relaxed">
-                    <span className="inline-flex items-center font-black text-blue-700 text-lg mb-2">
+                  <p className="text-gray-800 text-base leading-relaxed">
+                    <span className="inline-flex items-center font-black text-blue-700 text-base mb-2">
                       <span className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-3">1</span>
                       Option 1:
                     </span>
@@ -184,8 +184,8 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
                 </div>
                 
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200 shadow-lg">
-                  <p className="text-gray-800 text-xl leading-relaxed">
-                    <span className="inline-flex items-center font-black text-green-700 text-lg mb-2">
+                  <p className="text-gray-800 text-base leading-relaxed">
+                    <span className="inline-flex items-center font-black text-green-700 text-base mb-2">
                       <span className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-3">2</span>
                       Option 2:
                     </span>
@@ -279,20 +279,19 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
           {/* Step 2 Section */}
           <div className="grid lg:grid-cols-2 gap-16 items-start mt-20">
             {/* Left side - Step 2 Instructions */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-10 hover:shadow-3xl transition-shadow duration-300">
-              <div className="mb-10">
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-2xl border border-white/20 p-10 hover:shadow-3xl transition-shadow duration-300">
+              <div className="mb-3">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl mb-6">
                   <span className="text-3xl font-bold text-white">2</span>
                 </div>
-                <h2 className="text-4xl font-black text-gray-900 mb-8">Step 2</h2>
               </div>
               
               <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-6 border border-orange-200 shadow-lg">
-                <p className="text-gray-800 text-xl leading-relaxed">
+                <p className="text-gray-800 text-base leading-relaxed">
                   You should be redirected back to the {decodeHtmlEntities(plugin.name || 'plugin')} review page.
                 </p>
                 <br />
-                <p className="text-gray-800 text-xl leading-relaxed">
+                <p className="text-gray-800 text-base leading-relaxed">
                   Here, click on the{' '}
                   <span className="font-black bg-blue-600 text-white px-3 py-1 rounded-lg">&ldquo;Add your own review&rdquo;</span>{' '}
                   button or scroll down to the bottom of the page.
@@ -337,12 +336,17 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
                     </div>
                     
                                          <div className="flex items-center space-x-3">
-                       <div className="bg-blue-600 text-white px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-blue-700">
+                       <a
+                         href={reviewUrl}
+                         target="_blank"
+                         rel="noopener noreferrer"
+                         className="bg-blue-600 text-white px-3 py-2 rounded text-sm font-medium cursor-pointer hover:bg-blue-700 transition-colors duration-200"
+                       >
                          Add your own review
-                       </div>
+                       </a>
                        <div className="text-red-500">
-                         <svg className="w-16 h-12 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 32 24">
-                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M20 6l8 6m0 0l-8 6m8-6H4" />
+                         <svg className="w-16 h-12 wiggle-arrow" fill="none" stroke="currentColor" viewBox="0 0 32 24">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 6l-8 6m0 0l8 6m-8-6h24" />
                          </svg>
                        </div>
                      </div>

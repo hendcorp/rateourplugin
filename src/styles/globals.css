@@ -35,4 +35,15 @@ a {
   }
 }
 
-/* You can add custom global styles below */ 
+/* You can add custom global styles below */
+
+/* Arrow wiggle animation */
+@keyframes wiggle {
+  0% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  100% { transform: translateX(-5px); }
+}
+
+.wiggle-arrow {
+  animation: wiggle 1s ease-in-out infinite;
+} 
