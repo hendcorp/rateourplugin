@@ -61,9 +61,43 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
   const reviewUrl = `https://wordpress.org/support/plugin/${slug}/reviews/`
   const loginUrl = 'https://login.wordpress.org/'
   
-  // Safe access to plugin icons with fallback
-  const defaultIcon = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iOCIgZmlsbD0iIzMzNzNkYyIvPgo8cGF0aCBkPSJNMjQgMjBoMTZ2NGgtMTZ2LTR6bTAgOGgxNnY0aC0xNnYtNHptMCA4aDE2djRoLTE2di00eiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+'
-  const iconUrl = plugin.icons?.['2x'] || plugin.icons?.['1x'] || plugin.icons?.default || defaultIcon
+  // Helper function to decode HTML entities
+  const decodeHtmlEntities = (text: string): string => {
+    if (typeof window !== 'undefined') {
+      const textarea = document.createElement('textarea')
+      textarea.innerHTML = text
+      return textarea.value
+    } else {
+      // Server-side fallback
+      return text
+        .replace(/&#8211;/g, '–')
+        .replace(/&#8217;/g, "'")
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+    }
+  }
+
+  // Safe access to plugin icons with fallback - WordPress.org style default icon
+  const defaultIcon = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiByeD0iOCIgZmlsbD0iIzIzMjgyZCIvPgo8Y2lyY2xlIGN4PSI2NCIgY3k9IjY0IiByPSI0NCIgZmlsbD0iIzM3NGE1NSIvPgo8Y2lyY2xlIGN4PSI2NCIgY3k9IjY0IiByPSIzMiIgZmlsbD0iIzQ5NWY2YyIvPgo8Y2lyY2xlIGN4PSI2NCIgY3k9IjY0IiByPSIyMCIgZmlsbD0iIzVjNzM4MSIvPgo8Y2lyY2xlIGN4PSI2NCIgY3k9IjY0IiByPSIxMCIgZmlsbD0iI2ZmZiIvPgo8L3N2Zz4='
+  
+  // Check if plugin has icons, otherwise try to construct the icon URL
+  let iconUrl = defaultIcon
+  if (plugin.icons && typeof plugin.icons === 'object') {
+    iconUrl = plugin.icons['2x'] || plugin.icons['1x'] || plugin.icons.default || defaultIcon
+  } else {
+    // API doesn't provide icons, try to construct based on plugin slug
+    // Special handling for known plugins
+    if (slug === 'wp-rss-aggregator') {
+      iconUrl = 'https://ps.w.org/wp-rss-aggregator/assets/icon-128x128.gif?rev=3157091'
+    } else {
+      // For other plugins, try the common icon URL pattern
+      iconUrl = `https://ps.w.org/${slug}/assets/icon-128x128.png`
+    }
+  }
+  
+  console.log('Using icon URL:', iconUrl === defaultIcon ? 'default icon' : iconUrl)
 
   const StarIcon = ({ filled }: { filled: boolean }) => (
     <svg
@@ -78,8 +112,8 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
   return (
     <>
       <Head>
-        <title>How to rate {plugin.name || 'this plugin'} on WordPress.org</title>
-        <meta name="description" content={`Learn how to leave a 5-star review for ${plugin.name || 'this plugin'} on WordPress.org`} />
+        <title>{`How to rate ${decodeHtmlEntities(plugin.name || 'this plugin')} on WordPress.org`}</title>
+        <meta name="description" content={`Learn how to leave a 5-star review for ${decodeHtmlEntities(plugin.name || 'this plugin')} on WordPress.org`} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
@@ -165,53 +199,52 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
               </div>
             </div>
 
-            {/* Right side - Plugin card */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/30 overflow-hidden hover:shadow-3xl transition-shadow duration-300">
-              {/* Plugin header */}
-              <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 p-8 text-white relative overflow-hidden">
-                <div className="absolute inset-0 bg-black/10"></div>
-                <div className="relative z-10 flex items-start space-x-6">
-                  <div className="w-24 h-24 rounded-2xl overflow-hidden bg-white/20 backdrop-blur-sm flex items-center justify-center border-3 border-white/40 shadow-xl">
+            {/* Right side - WordPress.org-style Plugin Review Interface */}
+            <div className="bg-white shadow-lg border border-gray-200 rounded-lg overflow-hidden">
+              {/* Plugin header - WordPress.org style */}
+              <div className="bg-white border-b border-gray-200 p-6">
+                <div className="flex items-center space-x-4 mb-4">
+                  <div className="w-16 h-16 rounded overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-300">
                     <img
                       src={iconUrl}
                       alt={`${plugin.name || 'Plugin'} icon`}
-                      className="w-full h-full object-cover rounded-xl"
+                      className="w-full h-full object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement
-                        target.src = defaultIcon
+                        // If the specific icon fails, try alternative formats
+                        if (target.src !== defaultIcon) {
+                          if (slug === 'wp-rss-aggregator' && !target.src.includes('gif')) {
+                            // Try the .gif version first for wp-rss-aggregator
+                            target.src = 'https://ps.w.org/wp-rss-aggregator/assets/icon-128x128.gif?rev=3157091'
+                          } else if (!target.src.includes('.png') && slug !== 'wp-rss-aggregator') {
+                            // Try .png version for other plugins
+                            target.src = `https://ps.w.org/${slug}/assets/icon-128x128.png`
+                          } else {
+                            // Fall back to default icon
+                            target.src = defaultIcon
+                          }
+                        }
                       }}
                     />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-3xl font-black mb-3 text-white drop-shadow-lg">
-                      {plugin.name || 'Plugin Name'}
-                    </h3>
-                    <p className="text-white/90 text-lg leading-relaxed font-medium">
-                      {plugin.short_description || 'WordPress Plugin'}
-                    </p>
+                    <h1 className="text-2xl font-semibold text-gray-900 leading-tight">
+                      {decodeHtmlEntities(plugin.name || 'Plugin Name')}
+                    </h1>
                   </div>
                 </div>
               </div>
 
-              {/* Plugin stats */}
-              <div className="p-8">
-                <div className="grid grid-cols-2 gap-6 mb-8">
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 text-center border border-blue-200 shadow-lg">
-                    <div className="text-3xl font-black text-blue-700 mb-1">{plugin.version || '1.0.0'}</div>
-                    <div className="text-sm font-semibold text-blue-600">Version</div>
-                  </div>
-                  <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 text-center border border-green-200 shadow-lg">
-                    <div className="text-3xl font-black text-green-700 mb-1">{(plugin.downloaded || 0).toLocaleString()}+</div>
-                    <div className="text-sm font-semibold text-green-600">Downloads</div>
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-r from-yellow-50 via-amber-50 to-orange-50 rounded-2xl p-6 mb-8 text-center border-2 border-yellow-300 shadow-lg">
-                  <div className="flex justify-center space-x-2 mb-3">
+              {/* Average Rating Section - WordPress.org style */}
+              <div className="bg-white p-6 border-b border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Average Rating</h2>
+                
+                <div className="flex items-center space-x-4 mb-4">
+                  <div className="flex items-center space-x-1">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <svg
                         key={star}
-                        className={`w-8 h-8 ${star <= Math.round((plugin.rating || 0) / 20) ? 'text-yellow-500 drop-shadow-md' : 'text-gray-300'}`}
+                        className={`w-5 h-5 ${star <= Math.round((plugin.rating || 0) / 20) ? 'text-orange-400' : 'text-gray-300'}`}
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -219,26 +252,166 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
                       </svg>
                     ))}
                   </div>
-                  <div className="text-lg font-bold text-gray-800">
-                    {plugin.num_ratings || 0} reviews
-                  </div>
+                  <span className="text-gray-700 text-sm">
+                    {((plugin.rating || 0) / 20).toFixed(1)} out of 5 stars.
+                  </span>
                 </div>
 
-                <div className="space-y-4">
-                  <h4 className="font-black text-gray-900 text-2xl mb-6">Frequently Asked Questions</h4>
-                  <div className="space-y-3">
-                    <a href="#" className="block p-4 rounded-xl bg-gradient-to-r from-gray-50 to-slate-50 hover:from-gray-100 hover:to-slate-100 text-gray-700 hover:text-gray-900 transition-all duration-200 border border-gray-200 shadow-sm hover:shadow-md font-semibold">
-                      Support Threads
-                    </a>
-                    <a href="#" className="block p-4 rounded-xl bg-gradient-to-r from-gray-50 to-slate-50 hover:from-gray-100 hover:to-slate-100 text-gray-700 hover:text-gray-900 transition-all duration-200 border border-gray-200 shadow-sm hover:shadow-md font-semibold">
-                      Active Topics
-                    </a>
-                    <a href="#" className="block p-4 rounded-xl bg-gradient-to-r from-gray-50 to-slate-50 hover:from-gray-100 hover:to-slate-100 text-gray-700 hover:text-gray-900 transition-all duration-200 border border-gray-200 shadow-sm hover:shadow-md font-semibold">
-                      Unresolved Topics
-                    </a>
-                    <a href={reviewUrl} target="_blank" rel="noopener noreferrer" className="block p-4 rounded-xl bg-gradient-to-r from-yellow-50 to-amber-50 hover:from-yellow-100 hover:to-amber-100 text-yellow-800 hover:text-yellow-900 transition-all duration-200 border-2 border-yellow-300 shadow-md hover:shadow-lg font-bold">
-                      Reviews ⭐
-                    </a>
+                <div className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors duration-200 inline-block text-sm font-medium cursor-pointer">
+                  Add your own review
+                </div>
+              </div>
+
+              {/* Reviews Breakdown - WordPress.org style */}
+              <div className="bg-white p-6 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">{plugin.num_ratings || 538} reviews</h3>
+                
+                <div className="space-y-2">
+                  {[
+                    { stars: 5, count: 442, color: 'bg-red-500' },
+                    { stars: 4, count: 28, color: 'bg-orange-400' },
+                    { stars: 3, count: 8, color: 'bg-yellow-400' },
+                    { stars: 2, count: 9, color: 'bg-yellow-300' },
+                    { stars: 1, count: 51, color: 'bg-red-400' }
+                  ].map((rating) => (
+                    <div key={rating.stars} className="flex items-center space-x-2 text-sm">
+                      <span className="text-blue-600 hover:underline cursor-pointer">
+                        {rating.stars} stars
+                      </span>
+                      <div className="flex-1 bg-gray-200 rounded-full h-2 mx-2 relative">
+                        <div 
+                          className={`${rating.color} h-2 rounded-full`}
+                          style={{ width: `${(rating.count / 538) * 100}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-blue-600 hover:underline cursor-pointer w-8 text-right">
+                        {rating.count}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="text-sm text-gray-600 mt-4">
+                  You are currently viewing the reviews that provided a rating of{' '}
+                  <strong>5 stars</strong>.{' '}
+                  <a href="#" className="text-blue-600 hover:underline">See all reviews</a>.
+                </p>
+              </div>
+
+              {/* Forum Links - WordPress.org style */}
+              <div className="bg-gray-50 p-6">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left py-2 text-gray-700 font-medium">Topic</th>
+                      <th className="text-center py-2 text-gray-700 font-medium w-20">Participants</th>
+                      <th className="text-center py-2 text-gray-700 font-medium w-16">Replies</th>
+                      <th className="text-right py-2 text-gray-700 font-medium w-32">Last Post</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-gray-600">
+                    <tr className="border-b border-gray-100">
+                      <td className="py-3">
+                        <a href="#" className="text-purple-600 hover:underline font-medium">
+                          Brilliant support
+                        </a>
+                        <div className="flex items-center space-x-1 mt-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <svg key={star} className="w-3 h-3 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          ))}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          Started by: <a href="#" className="text-blue-600 hover:underline">possum66</a>
+                        </div>
+                      </td>
+                      <td className="text-center py-3">1</td>
+                      <td className="text-center py-3">0</td>
+                      <td className="text-right py-3">
+                        <div className="text-xs">
+                          <div className="text-blue-600 hover:underline">9 hours, 48 minutes ago</div>
+                          <div className="text-blue-600 hover:underline">possum66</div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-3">
+                        <a href="#" className="text-purple-600 hover:underline font-medium">
+                          Very responsive support
+                        </a>
+                        <div className="flex items-center space-x-1 mt-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <svg key={star} className="w-3 h-3 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          ))}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          Started by: <a href="#" className="text-blue-600 hover:underline">littlebizonline</a>
+                        </div>
+                      </td>
+                      <td className="text-center py-3">2</td>
+                      <td className="text-center py-3">1</td>
+                      <td className="text-right py-3">
+                        <div className="text-xs">
+                          <div className="text-blue-600 hover:underline">2 days, 5 hours ago</div>
+                          <div className="text-blue-600 hover:underline">Hendra Setiawan</div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-3">
+                        <a href="#" className="text-purple-600 hover:underline font-medium">
+                          Fabulous plugin
+                        </a>
+                        <div className="flex items-center space-x-1 mt-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <svg key={star} className="w-3 h-3 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          ))}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          Started by: <a href="#" className="text-blue-600 hover:underline">vishal1988</a>
+                        </div>
+                      </td>
+                      <td className="text-center py-3">2</td>
+                      <td className="text-center py-3">1</td>
+                      <td className="text-right py-3">
+                        <div className="text-xs">
+                          <div className="text-blue-600 hover:underline">5 days, 1 hour ago</div>
+                          <div className="text-blue-600 hover:underline">Hendra Setiawan</div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Right sidebar links - WordPress.org style */}
+              <div className="bg-white p-6">
+                <div className="space-y-2">
+                  <div className="text-sm text-gray-600 mb-2">Howdy, <a href="#" className="text-blue-600 hover:underline">Hendra Setiawan</a></div>
+                  <a href="#" className="block text-blue-600 hover:underline text-sm">Log Out</a>
+                </div>
+                
+                <div className="mt-6 space-y-3">
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-2">
+                      <a href="#" className="text-blue-600 hover:underline">
+                        {plugin.name || 'RSS Aggregator - RSS Import, News Feeds, Feed to Post, and Autoblogging'}
+                      </a>
+                    </h3>
+                  </div>
+                  
+                  <div className="space-y-1 text-sm">
+                    <a href="#" className="block text-blue-600 hover:underline">Frequently Asked Questions</a>
+                    <a href="#" className="block text-blue-600 hover:underline">Support Threads</a>
+                    <a href="#" className="block text-blue-600 hover:underline">Active Topics</a>
+                    <a href="#" className="block text-blue-600 hover:underline">Unresolved Topics</a>
+                    <a href={reviewUrl} target="_blank" rel="noopener noreferrer" className="block text-blue-600 hover:underline font-medium">Reviews</a>
+                    <a href="#" className="block text-blue-600 hover:underline">Add Review</a>
                   </div>
                 </div>
               </div>
@@ -300,6 +473,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     // Log the plugin structure to understand what we're getting
     console.log('Plugin object keys:', Object.keys(plugin || {}))
     console.log('Plugin icons:', plugin?.icons)
+    console.log('Plugin banners:', plugin?.banners)
     
     // Validate that we have the minimum required data
     if (!plugin || typeof plugin !== 'object') {
