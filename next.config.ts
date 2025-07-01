@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    // Allow images from WordPress.org domains
+    domains: ['ps.w.org', 's.w.org'],
+  },
 };
 
 export default nextConfig;

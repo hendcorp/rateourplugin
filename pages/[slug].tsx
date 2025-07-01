@@ -40,7 +40,7 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
           <div className="max-w-md w-full text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">Plugin Not Found</h1>
             <p className="text-gray-600 mb-6">
-              We couldn't find a plugin with the slug "{slug}". Please check the URL and try again.
+              We couldn&apos;t find a plugin with the slug &ldquo;{slug}&rdquo;. Please check the URL and try again.
             </p>
             <Link href="/" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
               Go Back
@@ -125,7 +125,7 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
                 <div>
                   <p className="text-gray-700">
                     <span className="font-semibold">Option 2:</span> Click on the{' '}
-                    <span className="font-semibold">"Log In"</span> button in the top right-hand corner of the{' '}
+                    <span className="font-semibold">&ldquo;Log In&rdquo;</span> button in the top right-hand corner of the{' '}
                     <a
                       href={pluginUrl}
                       target="_blank"
@@ -143,15 +143,17 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
             {/* Right side - Plugin card */}
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex items-start space-x-4 mb-6">
-                <img
-                  src={iconUrl}
-                  alt={`${plugin.name} icon`}
-                  className="w-16 h-16 rounded-lg object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement
-                    target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iOCIgZmlsbD0iIzMzNzNkYyIvPgo8cGF0aCBkPSJNMjQgMjBoMTZ2NGgtMTZ2LTR6bTAgOGgxNnY0aC0xNnYtNHptMCA4aDE2djRoLTE2di00eiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+'
-                  }}
-                />
+                <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                  <img
+                    src={iconUrl}
+                    alt={`${plugin.name} icon`}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement
+                      target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iOCIgZmlsbD0iIzMzNzNkYyIvPgo8cGF0aCBkPSJNMjQgMjBoMTZ2NGgtMTZ2LTR6bTAgOGgxNnY0aC0xNnYtNHptMCA4aDE2djRoLTE2di00eiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+'
+                    }}
+                  />
+                </div>
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-gray-900 mb-2">
                     {plugin.name}
