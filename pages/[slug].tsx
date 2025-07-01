@@ -55,7 +55,9 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
   const reviewUrl = `https://wordpress.org/support/plugin/${slug}/reviews/`
   const loginUrl = 'https://login.wordpress.org/'
   
-  const iconUrl = plugin.icons['2x'] || plugin.icons['1x'] || plugin.icons.default || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iOCIgZmlsbD0iIzMzNzNkYyIvPgo8cGF0aCBkPSJNMjQgMjBoMTZ2NGgtMTZ2LTR6bTAgOGgxNnY0aC0xNnYtNHptMCA4aDE2djRoLTE2di00eiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+'
+  // Safe access to plugin icons with fallback
+  const defaultIcon = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iOCIgZmlsbD0iIzMzNzNkYyIvPgo8cGF0aCBkPSJNMjQgMjBoMTZ2NGgtMTZ2LTR6bTAgOGgxNnY0aC0xNnYtNHptMCA4aDE2djRoLTE2di00eiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+'
+  const iconUrl = plugin.icons?.['2x'] || plugin.icons?.['1x'] || plugin.icons?.default || defaultIcon
 
   const StarIcon = ({ filled }: { filled: boolean }) => (
     <svg
@@ -70,8 +72,8 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
   return (
     <>
       <Head>
-        <title>How to rate {plugin.name} on WordPress.org</title>
-        <meta name="description" content={`Learn how to leave a 5-star review for ${plugin.name} on WordPress.org`} />
+        <title>How to rate {plugin.name || 'this plugin'} on WordPress.org</title>
+        <meta name="description" content={`Learn how to leave a 5-star review for ${plugin.name || 'this plugin'} on WordPress.org`} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
@@ -132,7 +134,7 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:text-blue-800 underline"
                     >
-                      {plugin.name} page
+                      {plugin.name || 'plugin'} page
                     </a>
                     .
                   </p>
@@ -146,20 +148,20 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
                 <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
                   <img
                     src={iconUrl}
-                    alt={`${plugin.name} icon`}
+                    alt={`${plugin.name || 'Plugin'} icon`}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement
-                      target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iOCIgZmlsbD0iIzMzNzNkYyIvPgo8cGF0aCBkPSJNMjQgMjBoMTZ2NGgtMTZ2LTR6bTAgOGgxNnY0aC0xNnYtNHptMCA4aDE2djRoLTE2di00eiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+'
+                      target.src = defaultIcon
                     }}
                   />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    {plugin.name}
+                    {plugin.name || 'Plugin Name'}
                   </h3>
                   <p className="text-gray-600 text-sm mb-2">
-                    {plugin.short_description}
+                    {plugin.short_description || 'WordPress Plugin'}
                   </p>
                 </div>
               </div>
@@ -167,22 +169,22 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Version:</span>
-                  <span className="font-semibold">{plugin.version}</span>
+                  <span className="font-semibold">{plugin.version || '1.0.0'}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Downloads:</span>
-                  <span className="font-semibold">{plugin.downloaded.toLocaleString()}+</span>
+                  <span className="font-semibold">{(plugin.downloaded || 0).toLocaleString()}+</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Rating:</span>
                   <div className="flex items-center space-x-1">
                     <div className="flex space-x-0.5">
                       {[1, 2, 3, 4, 5].map((star) => (
-                        <StarIcon key={star} filled={star <= Math.round(plugin.rating / 20)} />
+                        <StarIcon key={star} filled={star <= Math.round((plugin.rating || 0) / 20)} />
                       ))}
                     </div>
                     <span className="text-sm text-gray-600 ml-2">
-                      ({plugin.num_ratings} reviews)
+                      ({plugin.num_ratings || 0} reviews)
                     </span>
                   </div>
                 </div>
@@ -238,15 +240,35 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   }
 
   try {
-    const response = await fetch(
-      `https://api.wordpress.org/plugins/info/1.2/?action=plugin_information&request[slug]=${slug}`
-    )
+    const apiUrl = `https://api.wordpress.org/plugins/info/1.2/?action=plugin_information&request[slug]=${slug}`
+    console.log('Fetching plugin data from:', apiUrl)
+    
+    const response = await fetch(apiUrl)
     
     if (!response.ok) {
-      throw new Error('Plugin not found')
+      console.error('API response not OK:', response.status, response.statusText)
+      throw new Error(`HTTP error! status: ${response.status}`)
     }
     
-    const plugin = await response.json()
+    const responseText = await response.text()
+    console.log('Raw API response:', responseText.substring(0, 200) + '...')
+    
+    let plugin
+    try {
+      plugin = JSON.parse(responseText)
+    } catch (parseError) {
+      console.error('Failed to parse JSON response:', parseError)
+      throw new Error('Invalid JSON response from WordPress API')
+    }
+
+    // Log the plugin structure to understand what we're getting
+    console.log('Plugin object keys:', Object.keys(plugin || {}))
+    console.log('Plugin icons:', plugin?.icons)
+    
+    // Validate that we have the minimum required data
+    if (!plugin || typeof plugin !== 'object') {
+      throw new Error('Invalid plugin data structure')
+    }
 
     // WordPress API returns the plugin data directly
     return {
@@ -256,7 +278,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       }
     }
   } catch (error) {
-    console.error('Error fetching plugin data:', error)
+    console.error('Error fetching plugin data for slug:', slug, error)
     return {
       props: {
         plugin: null,
