@@ -123,7 +123,7 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
               {[1, 2, 3, 4, 5].map((star) => (
                 <svg
                   key={star}
-                  className="w-6 h-6 text-yellow-400"
+                  className="w-8 h-8 md:w-9 md:h-9 text-yellow-400"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -138,7 +138,7 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
               href={reviewUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block bg-orange-600 hover:bg-orange-700 text-white font-semibold text-base md:text-lg px-6 md:px-8 py-3 md:py-3.5 rounded-lg transition-colors duration-200"
+              className="inline-block bg-orange-600 hover:bg-orange-700 text-white font-semibold text-sm md:text-base px-4 md:px-5 py-2.5 md:py-3 rounded-md transition-colors duration-200"
             >
               Leave a 5 star review
             </a>
