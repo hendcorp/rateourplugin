@@ -198,7 +198,7 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
                       rel="noopener noreferrer"
                       className="text-blue-700 hover:text-blue-900 underline font-bold decoration-2 underline-offset-2"
                     >
-                      {plugin.name || 'plugin'} page
+                      {decodeHtmlEntities(plugin.name || 'plugin')} page
                     </a>
                     .
                   </p>
