@@ -9,6 +9,9 @@
   margin: 0;
 }
 
+/* Import Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
 html,
 body {
   max-width: 100vw;
@@ -17,7 +20,7 @@ body {
 
 /* Ensure proper font rendering */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -34,8 +37,6 @@ a {
     text-wrap: balance;
   }
 }
-
-/* You can add custom global styles below */
 
 /* Arrow wiggle animation */
 @keyframes wiggle {

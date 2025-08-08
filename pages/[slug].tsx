@@ -128,22 +128,27 @@ export default function PluginPage({ plugin, slug }: PluginPageProps) {
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-16 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Header with 5 stars */}
-          <div className="text-center mb-20">
-            <div className="flex justify-center space-x-3 mb-12">
+          <div className="text-center mb-12">
+            <div className="flex justify-center gap-2 mb-6">
               {[1, 2, 3, 4, 5].map((star) => (
-                <div key={star} className="transform hover:scale-110 transition-transform duration-200">
-                  <StarIcon filled={true} />
-                </div>
+                <svg
+                  key={star}
+                  className="w-6 h-6 text-yellow-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
               ))}
             </div>
-            <h1 className="text-6xl md:text-7xl font-black text-gray-900 mb-16 leading-tight tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-6 leading-tight tracking-tight">
               How to rate us on WordPress.org
             </h1>
             <a
               href={reviewUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold text-2xl px-16 py-8 rounded-2xl transition duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl"
+              className="inline-block bg-orange-600 hover:bg-orange-700 text-white font-semibold text-base md:text-lg px-6 md:px-8 py-3 md:py-3.5 rounded-lg transition-colors duration-200"
             >
               Leave a 5 star review
             </a>
